@@ -139,7 +139,7 @@ class InstallWizard(QtWidgets.QWizard, object):
         # TODO: Make sure it is actually executable
 
         self.should_show_last_page = False
-        self.error_message_nice = tr("An unknown error occurred.")
+        self.error_message_nice = tr("An unknown error occurred...Ghost in the machine...SRVERR")
 
         self.setWizardStyle(QtWidgets.QWizard.MacStyle)
 
