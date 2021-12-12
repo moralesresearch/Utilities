@@ -1,4 +1,4 @@
-# hello
+# Welcome to MR UNIX X (10.0)
 
 Welcome to your computer.
 Made simple again.
