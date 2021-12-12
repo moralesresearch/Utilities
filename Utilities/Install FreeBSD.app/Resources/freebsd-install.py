@@ -110,7 +110,7 @@ def show_the_no_password_warning(sender):
 # https://doc.qt.io/qt-5/qwizard.html
 #############################################################################
 
-print(tr("Install FreeBSD"))
+print(tr("Install Research Unix"))
 
 app = QtWidgets.QApplication(sys.argv)
 
@@ -146,7 +146,7 @@ class InstallWizard(QtWidgets.QWizard, object):
         # self.setButtonLayout(
         #     [QtWidgets.QWizard.CustomButton1, QtWidgets.QWizard.Stretch, QtWidgets.QWizard.NextButton])
 
-        self.setWindowTitle(tr("Install FreeBSD"))
+        self.setWindowTitle(tr("Install Research Unix (Base System)"))
         self.setFixedSize(800, 550)
 
         # Remove window decorations, especially the close button
