@@ -4,8 +4,8 @@
 <context>
     <name>@default</name>
     <message>
-        <source>An unknown error occured.</source>
-        <translation type="unfinished"></translation>
+        <source>An unknown error occurred.</source>
+        <translation>მოხდა უცნობი შეცდომა.</translation>
     </message>
     <message>
         <source>Hardware Probe</source>
