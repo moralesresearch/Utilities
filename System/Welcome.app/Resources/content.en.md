@@ -1,4 +1,4 @@
-# Welcome to MR UNIX X (10.0)
+# Welcome to MR UNIX v10.0 Public Beta
 
 Welcome to your computer.
 Made simple again.
