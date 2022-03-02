@@ -110,7 +110,7 @@ def show_the_no_password_warning(sender):
 # https://doc.qt.io/qt-5/qwizard.html
 #############################################################################
 
-print(tr("Install Research Unix"))
+print(tr("Install Morales Research Unix"))
 
 app = QtWidgets.QApplication(sys.argv)
 
@@ -146,7 +146,7 @@ class InstallWizard(QtWidgets.QWizard, object):
         # self.setButtonLayout(
         #     [QtWidgets.QWizard.CustomButton1, QtWidgets.QWizard.Stretch, QtWidgets.QWizard.NextButton])
 
-        self.setWindowTitle(tr("Install Research Unix (Base System)"))
+        self.setWindowTitle(tr("Install Morales Research Unix (Base System)"))
         self.setFixedSize(800, 550)
 
         # Remove window decorations, especially the close button
@@ -581,7 +581,7 @@ class IntroPage(QtWidgets.QWizardPage, object):
         print("Preparing IntroPage")
         super().__init__()
 
-        self.setTitle(tr('Install Research Unix'))
+        self.setTitle(tr('Install Morales Research Unix'))
         self.setSubTitle(tr("To set up the installation of Morales Research Unix, click 'Continue'."))
 
         logo_pixmap = QtGui.QPixmap(os.path.dirname(__file__) + '/FREEBSD_Logo_Vert_Pos_RGB.png').scaledToHeight(200, QtCore.Qt.SmoothTransformation)
@@ -600,7 +600,7 @@ class IntroPage(QtWidgets.QWizardPage, object):
 
         intro_label = QtWidgets.QLabel()
         intro_label.setWordWrap(True)
-        intro_label.setText(tr("Morales Research Unix is an operating system for a variety of platforms which focuses on features, speed, and stability. It is derived from BSD, the version of UNIX® developed at the University of California, Berkeley. It is developed and maintained by a large community."))
+        intro_label.setText(tr("Morales Research Unix is an operating system for a variety of platforms which focuses on features, speed, and stability. It is derived from 4.4BSD and FreeBSD 13, the version of UNIX® developed at the University of California, Berkeley. It is developed and maintained by a large community."))
         intro_vLayout.addWidget(intro_label, True)  # True = add stretch vertically
 
         tm_label = QtWidgets.QLabel()
@@ -1106,7 +1106,7 @@ class InstallationPage(QtWidgets.QWizardPage, object):
         print("Preparing InstallationPage")
         super().__init__()
 
-        self.setTitle(tr('Installing Research Unix'))
+        self.setTitle(tr('Installing Morales Research Unix'))
         self.setSubTitle(tr('Morales Research Unix is being installed to your computer.'))
 
         self.timer = None
@@ -1279,7 +1279,7 @@ class SuccessPage(QtWidgets.QWizardPage, object):
         wizard.playSound()
 
         self.setTitle(tr('Installation Complete'))
-        self.setSubTitle(tr('The installation succeeded.'))
+        self.setSubTitle(tr('The installation of Morales Research Unix succeeded.'))
 
         logo_pixmap = QtGui.QPixmap(os.path.dirname(__file__) + '/check.png').scaledToHeight(256, QtCore.Qt.SmoothTransformation)
         logo_label = QtWidgets.QLabel()
@@ -1296,7 +1296,7 @@ class SuccessPage(QtWidgets.QWizardPage, object):
         layout.addWidget(center_widget, True)  # True = add stretch vertically
 
         label = QtWidgets.QLabel()
-        label.setText(tr("Research Unix has been installed on your computer, click 'Restart' to begin using it."))
+        label.setText(tr("Morales Research Unix has been installed on your computer, click 'Restart' to begin using it."))
         layout.addWidget(label)
 
         self.setButtonText(wizard.NextButton, tr("Restart"))
