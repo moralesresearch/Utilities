@@ -1,7 +1,7 @@
-# Welcome to MR UNIX v10.0 Public Beta
+# Welcome to MR UNIX OS X Server v10.0 Public Beta
 
-Welcome to your computer.
-Made simple again.
+Welcome to your Server.
+Made simple again for easy use.
 
 Click on "Continue" to proceed.
 
