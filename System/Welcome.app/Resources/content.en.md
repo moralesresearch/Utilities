@@ -1,9 +1,16 @@
-# Welcome to MR UNIX v10.0 Public Beta
+# Welcome to MR UNIX OS X v10.0 Public Beta
 
 Welcome to your computer.
 Made simple again.
 
 Click on "Continue" to proceed.
+
+# About UNIX OS X
+Morales Research Unix is a desktop operating system based on helloSystem, FreeBSD, and 4.4BSD. It also includes a Server Edition for large workplaces.
+
+Besides the workplace, it can also be used for general-purpose computing and can be also be used for gaming with the proper support from the developers.
+
+It also strives to be lightweight on the computer and live installation CD/USB in order to provide a smooth out-of-box experience (OOBE) inspired by helloSystem, 4.4BSD, and Apple's Mac OS X
 
 # A system that works for, not against, you
 
