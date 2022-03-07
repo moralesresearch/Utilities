@@ -53,7 +53,7 @@ class Wizard(QtWidgets.QWizard, object):
         # self.setPixmap(QtWidgets.QWizard.BackgroundPixmap, QtGui.QPixmap(os.path.dirname(__file__) + '/Welcome.png'))
         self.setOption(QtWidgets.QWizard.ExtendedWatermarkPixmap, True) # Extend WatermarkPixmap all the way down to the window's edge; https://doc.qt.io/qt-5/qwizard.html#wizard-look-and-feel
 
-        self.setWindowTitle("Welcome to UNIX")
+        self.setWindowTitle("Welcome to UNIX OS X")
         self.setFixedSize(600, 400)
 
         self.setOption(QtWidgets.QWizard.NoCancelButton, True)
