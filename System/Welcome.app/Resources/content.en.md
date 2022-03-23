@@ -28,6 +28,7 @@ The Command key (⌘) is left to the spacebar on your keyboard. Use it to access
 Credit to helloSystem, FreeBSD, Apple, and the Class of 2023 at IDEA Montopolis CP (for the encouragement and inspiration).
 
 Students from the Class of 2023:
+
 Aida Sandrez,
 Arturo Roque,
 Amy Vallejo,
