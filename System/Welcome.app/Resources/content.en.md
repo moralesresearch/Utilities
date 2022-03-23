@@ -28,68 +28,68 @@ The Command key (⌘) is left to the spacebar on your keyboard. Use it to access
 Credit to helloSystem, FreeBSD, Apple, and the Class of 2023 at IDEA Montopolis CP (for the encouragement and inspiration).
 
 Students from the Class of 2023:
-Aida Sandrez
-Arturo Roque
-Amy Vallejo
-Azael Soria
-Anthony Santos
-Ashley Garduza
-Ashlee Cabriales
-Bryan Pastrana
-Braylon Flores
-Bernardo Gonzalez
-Gabriela "Gabby" Alejandro
-Christopher "Chris" Alberto
-Christopher Luna
-Cristian Crispin
-Celso Vazquez
-Daniel Villalonga
-David Cruz
-Elida Quintero
-Yadhira Duran
-Damaris Aparicio
-Luis Muñoz
-Darwin Resendis
-Derek Frias
-Daniela Rodriguez
-Isaiah Arvizu
-Jonathan Palacios
-Jose Huerta
-Johana Galdamez
-Bryan Escalate
-Lyllie Herrera
-Joselyn Ramos
-Jorge Cuevas
-Jorge Lopez
-Julio Rivera
-Kimberly Victoriano
-Karina Morales
-Ricardo "Ricky" Duarte
-Diana Lopez
-Maritza Aguilar
-Monserrat Cabrera
-Mariela Romero
-Maria Reyna
-Natalia Botello
-Luis "Louis" Guzman Arriaga
-Luis De Paz
-Hilario Iwabuchi
-Justin Jalomo
-Julian Hernandez
-John Chavez
-Alexa Rocha
-Jazmine "Jaz" Cortes
-Jeffery Patino
-Erick Suarez
-Elena Davis
-Elizabeth Alvarez
-Francisco Chavez
-Oziel Leon
-Ruby Robles
-Rashaud Mayberry
-Emily Estrada
-Gerardo Ortiz
-Celeste Juarez
+Aida Sandrez,
+Arturo Roque,
+Amy Vallejo,
+Azael Soria,
+Anthony Santos,
+Ashley Garduza,
+Ashlee Cabriales,
+Bryan Pastrana,
+Braylon Flores,
+Bernardo Gonzalez,
+Gabriela "Gabby" Alejandro,
+Christopher "Chris" Alberto,
+Christopher Luna,
+Cristian Crispin,
+Celso Vazquez,
+Daniel Villalonga,
+David Cruz,
+Elida Quintero,
+Yadhira Duran,
+Damaris Aparicio,
+Luis Muñoz,
+Darwin Resendis,
+Derek Frias,
+Daniela Rodriguez,
+Isaiah Arvizu,
+Jonathan Palacios,
+Jose Huerta,
+Johana Galdamez,
+Bryan Escalate,
+Lyllie Herrera,
+Joselyn Ramos,
+Jorge Cuevas,
+Jorge Lopez,
+Julio Rivera,
+Kimberly Victoriano,
+Karina Morales,
+Ricardo "Ricky" Duarte,
+Diana Lopez,
+Maritza Aguilar,
+Monserrat Cabrera,
+Mariela Romero,
+Maria Reyna,
+Natalia Botello,
+Luis "Louis" Guzman Arriaga,
+Luis De Paz,
+Hilario Iwabuchi,
+Justin Jalomo,
+Julian Hernandez,
+John Chavez,
+Alexa Rocha,
+Jazmine "Jaz" Cortes,
+Jeffery Patino,
+Erick Suarez,
+Elena Davis,
+Elizabeth Alvarez,
+Francisco Chavez,
+Oziel Leon,
+Ruby Robles,
+Rashaud Mayberry,
+Emily Estrada,
+Gerardo Ortiz,
+Celeste Juarez,
 
 And a special thanks to my teachers for the past decade for helping me to get where I am at!
 
