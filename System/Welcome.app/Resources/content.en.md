@@ -1,4 +1,4 @@
-# Welcome to MR UNIX OS X v10.0 Public Beta
+# Welcome to Sun/OS v6.1 Public Beta
 
 Welcome to your computer.
 Made simple again.
@@ -9,6 +9,7 @@ Click on "Continue" to proceed.
 
 The Free Research License v2.0
 Copyright (c) 2012-2021 Morales Research Corporation
+Copyright (c) 1998-2008 Sun Microsystem Inc
 Copyright (c) 1998-2012 Abdon Morales Jr
 Copyright (c) 1982-2012 Apple Inc.
 
@@ -28,8 +29,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-# About UNIX OS X
-Morales Research Unix is a desktop operating system based on helloSystem, FreeBSD, and 4.4BSD. It also includes a Server Edition for large workplaces.
+# About Sun/OS Unix
+Sun/OS Unix is a desktop operating system based on helloSystem, FreeBSD, and 4.4BSD. It also includes a Server Edition for large workplaces.
 
 Besides the workplace, it can also be used for general-purpose computing and can be also be used for gaming with the proper support from the developers.
 
@@ -48,7 +49,7 @@ Security: Built-in end-to-end encryption where possible. Has full source code av
 The Command key (⌘) is left to the spacebar on your keyboard. Use it to access shortcuts like ⌘C (Copy) and ⌘V (Paste).
 
 # Credits
-Credit to helloSystem, FreeBSD, Apple, and the Class of 2023 at IDEA Montopolis CP (for the encouragement and inspiration).
+Credit to helloSystem, FreeBSD, Apple, Sun Microsystems, and the Class of 2023 at IDEA Montopolis CP (for the encouragement and inspiration).
 
 Students from the Class of 2023:
 
