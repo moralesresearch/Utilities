@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>An unknown error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なエラーが発生しました</translation>
     </message>
     <message>
         <source>Pre-existing %s removed</source>
@@ -69,7 +69,7 @@
     </message>
     <message>
         <source>Select Destination Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>宛先ディスクの選択</translation>
     </message>
     <message>
         <source>All data on the selected disk will be erased.</source>
@@ -81,11 +81,11 @@
     </message>
     <message>
         <source>Disk space required: %s MiB</source>
-        <translation type="unfinished"></translation>
+        <translation>必要なディスク領域: %s MiB</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>注意</translation>
     </message>
     <message>
         <source>This will erase all contents of this disk and install the FreeBSD operating system on it. Continue?</source>
@@ -193,15 +193,15 @@
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <source>The installation could not be performed.</source>
-        <translation type="unfinished"></translation>
+        <translation>インストールを実行できませんでした。</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>やめておく</translation>
     </message>
 </context>
 <context>
