@@ -1,9 +1,16 @@
-# hola
+# Bienvenidos a MR UNIX OS X Beta Pública
 
 Bienvenido a tu ordenador.
 De nuevo, sencillo.
 
 Haga clic en "Continuar" para proseguir.
+
+# Sobre UNIX OS X
+Morales Research Unix es un sistema operativo que esta basado en FreeBSD, helloSystem, y 4.4BSD (Mach). Tambien incluye una Edición para servidores para lugares de trabajo grandes.
+
+Ademas de los lugares de trabajo grandes, también se puede usar para computacion de propósito general y tambien se puede usar para juegos con el soporte adecuado de los desarrolladores.
+
+También se esfuerza por ser liviano en tu ordenador y en el CD/USB de instalación en vivo para brindar una experiencia fluida e inmediata inspirada en helloSystem, 4.4BSD, y Mac OS X de Apple.
 
 # Un sistema que trabaja para ti, no contra ti
 

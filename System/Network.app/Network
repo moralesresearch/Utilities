@@ -1,0 +1,384 @@
+#!/usr/bin/env python3
+
+
+# TODO: List the different wireless interfaces with `wpa_cli interface` if there is more than one
+
+# TODO: Allow to "open a hotspot":
+# FreeBSD can act as an Access Point (AP) which eliminates the need to buy a hardware AP or run an ad-hoc network.
+# This can be particularly useful when a FreeBSD machine is acting as a gateway to another network such as the Internet.
+# https://vzaigrin.wordpress.com/2014/08/04/how-to-setup-wireless-access-point-on-raspberry-pi-running-freebsd/
+# https://github.com/opnsense/src/blob/master/tools/tools/net80211/scripts/setup.simple2
+# "WPA2 Host-based Access Point"
+# https://docs.freebsd.org/en/books/handbook/advanced-networking/#network-wireless
+
+
+from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QAction, QHBoxLayout, QGroupBox, QSlider, QWidget, \
+    QActionGroup, QDesktopWidget, QMessageBox, QInputDialog, QLineEdit
+from PyQt5.QtGui import QIcon, QPixmap, QCursor
+from PyQt5.QtCore import Qt, QProcess, QMetaObject, QCoreApplication, QEvent, QObject, QTimer, QPoint, QTimer
+from subprocess import Popen, check_output
+import sys, os, re, subprocess
+import re
+
+class NetworkMenu(QObject):
+
+    def __init__(self):
+
+        super().__init__()
+
+        # icon = QIcon(os.path.dirname(os.path.abspath(__file__)) + "/Resources/wireless.svg") # Does not seem to work
+        # TODO: Change the icon depending on signal strength; see /usr/local/share/icons/elementary-xfce/status/symbolic/network-wireless-*
+        self.tray = QSystemTrayIcon()
+
+        self.tray.setVisible(True)
+        self.menu = QMenu()
+
+        self.tray.setContextMenu(self.menu)
+        self.tray.activated.connect(self.show_menu)
+
+        # NOTE:
+        # https://forum.learnpyqt.com/t/qsystemtrayicon-example/689
+        # Sneaky PyQt quirk! A reference to the actions must be kept around or the actions will be destroyed
+        self.actions = []
+        self.sliderWindow = None
+        self.updateStatus()
+        
+        self.timer = QTimer()
+        self.timer.setInterval(3000) # Every 3 seconds
+        self.timer.timeout.connect(self.updateStatus)
+        self.timer.start()
+
+        self.refreshMenu() # Initially populate the menu
+        self.tray.installEventFilter(self) # FIXME: This never seems to get called, why?
+        self.installEventFilter(self)  # FIXME: This never seems to get called, why?
+
+    def eventFilter(self, obj, event):
+        print("eventFilter function running") # FIXME: Why is this never called when the icon is right-clicked?
+        # We need to refresh the contents of the right-click menu somehow when the user right-clicks...
+
+    def show_menu(self, reason):
+        self.updateMenu()
+        if reason == QSystemTrayIcon.Trigger:
+            # Ideally we would just tell it when it gets left-clicked
+            # to just do whatever it does when it gets right-clicked, but:
+            # self.tray.activated(QSystemTrayIcon.Context) # TypeError: native Qt signal is not callable
+            print(self.tray.geometry().getRect()) # Always returns (0, 0, 0, 0); why?
+            # self.menu.popup(QPoint(self.tray.geometry().x(), self.tray.geometry().y())) # Does not work for the same reason
+            # self.menu.move(QCursor.pos())
+            # self.menu.show() # When called like this, it appears as a context menu over the menu bar, which is not desired
+            # self.menu.activateWindow() # Needed on some systems to make the menu go away when clicked anywhere else but in the menu?
+            self.menu.popup(QCursor.pos()) # When called like this, it appears almost at the correct location but with the wrong font size, 
+            # as if it was a context menu rather than a real menu; probably because somehow its parent now is not the global menu bar main window?
+
+
+    def refreshMenu(self):
+        self.actions = []
+        # Get the networks from wpa_cli
+        p = QProcess()
+        p.setProgram("wpa_cli")
+
+        # First, scan
+        p.setArguments(["scan"])
+        print(p.program() + " " + " ".join(p.arguments()))
+        p.start()
+        p.waitForFinished()
+
+    def updateStatus(self):
+        p = QProcess()
+        p.setProgram("wpa_cli")
+        p.setArguments(["status"])
+        print(p.program() + " " + " ".join(p.arguments()))
+        p.start()
+        p.waitForFinished()
+
+        self.status_lines = str(p.readAllStandardOutput(), 'utf-8').strip().split("\n")
+        
+        print(self.status_lines)
+        
+        # Update the icon in the menu
+        for element in self.status_lines:
+            if element.startswith("wpa_state="):
+                status = element.split("=")[1]
+                break
+        try:    
+            if status == "SCANNING":
+                self.tray.setIcon(QIcon.fromTheme("network-wireless-acquiring-symbolic"))
+            elif status == "COMPLETED":
+                self.tray.setIcon(QIcon.fromTheme("network-wireless-symbolic"))
+                # TODO: Set different icons based on signal_level
+            else:
+                self.tray.setIcon(QIcon.fromTheme("network-wireless-offline-symbolic"))
+        except:
+            pass
+             
+    def updateMenu(self):
+    
+        # Find out whether we are connected to one of the networks
+        self.updateStatus()
+    
+        self.menu.clear()
+        # Second, show
+        p = QProcess()
+        p.setProgram("wpa_cli")
+        p.setArguments(["scan_results"])
+        print(p.program() + " " + " ".join(p.arguments()))
+        p.start()
+        p.waitForFinished()
+
+        lines = str(p.readAllStandardOutput(), 'utf-8').strip().split("\n")
+
+        self.wirelessGroup = QActionGroup(self.menu) # Only one of the actions added to this group can be active
+
+        action = QAction("Wireless")
+        action.setDisabled(True)
+        self.actions.append(action)
+        self.menu.addAction(action)
+        
+        if len(lines) > 1:
+            ssids_added_to_menu = []
+            for line in lines:
+                if line.startswith("Selected") or line.startswith("bssid"):
+                    continue
+                print(line)
+                # Parse out information for each network
+                regex = r"([^\ ]+)\t([^\ ]+)\t([^\ ]+)\t([^\ ]+)\t(.*)$"
+                matches = re.findall(regex, line)
+                if not matches:
+                    continue
+                print(len(matches[0]))
+                bssid = matches[0][0]
+                signal_level = int(matches[0][2])
+                flags = matches[0][3]
+                label = matches[0][4]
+
+                ssid = label
+                if label == "" or label.startswith("\\x00"):
+                    label = bssid # For networks with hidden ssid (network name)
+                action = QAction(line)
+                action.__setattr__("ssid", ssid)
+                action.__setattr__("bssid", bssid)
+                # if 'flags' in vars():
+                action.__setattr__("flags", flags)
+                action.triggered.connect(self.switchNetwork)  # lambda could be used to pass an argument but the argument passed is taken at the time when this executes, which is not what we want
+                action.setText(label)
+                if "ssid=" + ssid in self.status_lines:
+                    action.setIcon(QIcon.fromTheme("network-wireless-symbolic"))
+                action.setCheckable(True)
+                if "default" in line:
+                    action.setChecked(True)
+                if ssid not in ssids_added_to_menu:
+                    self.actions.append(action)
+                    self.wirelessGroup.addAction(action)
+                    self.menu.addAction(action)
+                    ssids_added_to_menu.append(ssid)
+
+        self.menu.addSeparator()
+
+        action = QAction("Rescan Networks")
+        # action.setDisabled(True)
+        action.triggered.connect(self.refreshMenu)
+        self.actions.append(action)
+        self.menu.addAction(action)
+
+        action = QAction("Create Hotspot...") # TODO: To be implemented
+        action.setDisabled(True)
+        self.actions.append(action)
+        self.menu.addAction(action)
+
+        action = QAction("Disconnect") # TODO: To be implemented
+        if "wpa_state=COMPLETED" in self.status_lines:
+            action.setDisabled(False)
+        else:
+            action.setDisabled(True)
+        action.triggered.connect(self.disconnect)
+        self.actions.append(action)
+        self.menu.addAction(action)
+
+        self.menu.addSeparator()
+
+        action = QAction("About")
+        action.triggered.connect(self._showAbout)
+        self.actions.append(action)
+        self.menu.addAction(action)
+
+    def reconnect(self):
+        p = QProcess()
+        p.setProgram("wpa_cli")
+        p.setArguments(["reconnect"])
+        print(p.program() + " " + " ".join(p.arguments()))
+        p.start()
+        p.waitForFinished()
+        output = str(p.readAllStandardOutput(), 'utf-8')
+        print(output)
+         
+    def disconnect(self):
+        p = QProcess()
+        p.setProgram("wpa_cli")
+        p.setArguments(["disconnect"])
+        print(p.program() + " " + " ".join(p.arguments()))
+        p.start()
+        p.waitForFinished()
+        output = str(p.readAllStandardOutput(), 'utf-8')
+        print(output)
+        self.tray.setIcon(QIcon.fromTheme("network-wireless-offline-symbolic"))
+        
+    def switchNetwork(self, line):
+        self.updateStatus()
+    
+        ssid = getattr(self.wirelessGroup.checkedAction(), "ssid")
+        bssid = getattr(self.wirelessGroup.checkedAction(), "bssid")
+        flags = getattr(self.wirelessGroup.checkedAction(), "flags")
+        
+        if "PSK" in flags:
+            password, ok = QInputDialog.getText(None, "Wireless network password", "Please enter\
+ the password for the %s network:" % ssid if ssid else bssid,
+                QLineEdit.Password) # TODO: Make OK only clickable when we have >= 8 characters
+            if not ok:
+                print("User did not click OK in password dialog")
+                return # Don't try to connect to a network if it has been cancelled.
+        
+        self.reconnect()
+            
+        # Get a byte string with wpa_cli's output and decode it
+        p = QProcess()
+        p.setProgram("wpa_cli")
+
+        # First, scan
+        p.setArguments(["list_networks"])
+        print(p.program() + " " + " ".join(p.arguments()))
+        p.start()
+        p.waitForFinished()
+        output = str(p.readAllStandardOutput(), 'utf-8')
+        l = output.strip().splitlines() # Split that output into lines, ignoring the
+        if len(l) < 2:                  # useless ones.
+            # If this is called, something is wrong with wpa_cli.
+            self.showError("Could not connect to the network", """For some reaso\
+n wpa_cli doesn't seem to be working.
+
+Information for debuggers:
+""" + o.strip())
+            return
+        isUsed = 0
+        for line in l[2:]: # Ignore 'selected interface' message and column labels
+            parts = line.split()
+            if parts[1] in [ssid, bssid]:
+                isUsed = 1
+                n = parts[0]
+
+        if isUsed: # TODO: We know we've already connected -- check why we are re-connecting
+            if "PSK" in flags:
+                p.setArguments(["set_network", str(n), "psk", '"' + password + '"'])
+                print(p.program() + " " + " ".join(p.arguments()))
+                p.start()
+                p.waitForFinished()
+                if "OK" in str(p.readAllStandardOutput(), 'utf-8'):
+                    return # good
+                else:
+                    self.showError("Could not connect to the network. Please check the password.")
+                    return # bad
+        else:
+            p.setArguments(["add_network"])
+            print(p.program() + " " + " ".join(p.arguments()))
+            p.start()
+            p.waitForFinished()
+            e = str(p.readAllStandardOutput(), 'utf-8').strip().splitlines()[-1]
+            if not e.isnumeric():
+                self.showError("Could not connect to the network.", "'%s' is not a number." % e)
+                print("'%s' is not a number." % e)
+                return # bad
+            try:
+                n = int(e)
+            except:
+                self.showError("Could not connect to the network.", "\
+We don't know why this happened.")
+                print("returned non-zero exit code")
+                return # bad
+            p.setArguments(["set_network", str(n), "ssid" if ssid else "bssid", '"' + (ssid if ssid else bssid) + '"'])
+            print(p.program() + " " + " ".join(p.arguments()))
+            p.start()
+            p.waitForFinished()
+            out = str(p.readAllStandardOutput(), 'utf-8')
+            if "OK" not in out:
+                self.showError("Could not connect to the network.",
+                               """Information for debuggers: """ + out)
+                return # bad
+            if "PSK" in flags:
+                p.setArguments(["set_network", str(n), "psk", '"' + password + '"'])
+            else:
+                p.setArguments(["set_network", str(n), "key_mgmt", "NONE"])
+            print(p.program() + " " + " ".join(p.arguments()))
+            p.start()
+            p.waitForFinished()
+            out = str(p.readAllStandardOutput(), 'utf-8')
+            if "OK" not in out:
+                self.showError("Could not connect to the network. Please check the password.",
+                               """Information for debuggers: """ + out)
+                return # not good
+            p.setArguments(["enable_network", str(n)])
+            print(p.program() + " " + " ".join(p.arguments()))
+            p.start()
+            p.waitForFinished()
+            lastout = str(p.readAllStandardOutput(), 'utf-8')
+            if "OK" in lastout:
+                p.setArguments(["save_config"])
+                print(p.program() + " " + " ".join(p.arguments()))
+                p.start()
+                p.waitForFinished()
+                return # good
+            else:
+                self.showError("Could not connect to the network. Please check the password.",
+                               """Information for debuggers: """ + lastout)
+                return # not good
+
+    def _showAbout(self):
+        print("showDialog")
+        msg = QMessageBox()
+        msg.setWindowTitle("Network")
+        msg.setIconPixmap(QPixmap(os.path.dirname(__file__) + "/Resources/Network.png").scaledToWidth(64, Qt.SmoothTransformation))
+        candidates = ["COPYRIGHT", "COPYING", "LICENSE"]
+        for candidate in candidates:
+            if os.path.exists(os.path.dirname(__file__) + "/" + candidate):
+                with open(os.path.dirname(__file__) + "/" + candidate, 'r') as file:
+                    data = file.read()
+                msg.setDetailedText(data)
+        msg.setText("<h3>Network</h3>")
+        msg.setInformativeText("A simple QSystemTrayIcon application to select the wireless network using <a href='https://www.freebsd.org/cgi/man.cgi?wpa_cli'>wpa_cli</a><br><br><a href='https://github.com/helloSystem/Utilities'>https://github.com/helloSystem/Utilities</a>")
+        msg.exec()
+
+    def showError(self, text, detailed_text=""):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setWindowTitle("Error")
+        msg.setText(text)
+        if detailed_text != "":
+            msg.setDetailedText(detailed_text)
+        msg.exec()
+
+if __name__ == "__main__":
+
+    # Simple singleton:
+    # Ensure that only one instance of this application is running by trying to kill the other ones
+    p = QProcess()
+    p.setProgram("pkill")
+    p.setArguments(["-f", os.path.abspath(__file__)])
+    cmd = p.program() + " " + " ".join(p.arguments())
+    print(cmd)
+    p.start()
+    p.waitForFinished()
+
+    # https://github.com/helloSystem/ISO/issues/330
+    # This requires ifconfig to be setuid so that normal users can run it
+    p.setProgram("ifconfig")
+    p.setArguments(["wlan0", "down"])
+    print(p.program() + " " + " ".join(p.arguments()))
+    p.start()
+    p.waitForFinished()
+    p.setArguments(["wlan0", "up"])
+    print(p.program() + " " + " ".join(p.arguments()))
+    p.start()
+    p.waitForFinished()
+
+    app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
+    NM = NetworkMenu()
+    sys.exit(app.exec_())

@@ -100,7 +100,7 @@
     </message>
     <message>
         <source>Text Edit</source>
-        <translation type="unfinished">Text Edit</translation>
+        <translation>Modifica testo</translation>
     </message>
 </context>
 </TS>

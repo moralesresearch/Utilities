@@ -4,7 +4,7 @@
 # Simple Zeroconf browser written for FreeBSD in PyQt5
 
 
-# Copyright (c) 2020-21, Simon Peter <probono@puredarwin.org>
+# Copyright (c) 2020-22, Simon Peter <probono@puredarwin.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 
 
 import os, sys, time
+from urllib.parse import urlparse
 
 try:
     from PyQt5 import QtWidgets, QtGui, QtCore
@@ -114,13 +115,16 @@ class ZeroconfService():
 
 
 class sshLogin(QtWidgets.QDialog):
-    def __init__(self, host=None, parent=None):
+    def __init__(self, host=None, parent=None, type="ssh"):
         super(sshLogin, self).__init__(parent)
         self.host = host
         self.setWindowTitle("Username")
         self.textName = QtWidgets.QLineEdit(self)
         self.buttonLogin = QtWidgets.QPushButton('Connect', self)
-        self.buttonLogin.clicked.connect(self.handleLogin)
+        if type == "sftp":
+            self.buttonLogin.clicked.connect(self.handleSftp)
+        else:
+            self.buttonLogin.clicked.connect(self.handleLogin)
         layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.textName)
         layout.addWidget(self.buttonLogin)
@@ -132,9 +136,33 @@ class sshLogin(QtWidgets.QDialog):
         args = ["QTerminal", "-e", "ssh", self.host, "-l", self.textName.text()]
         try:
             proc.startDetached("launch", args)
+            sys.exit(0)
         except:
-            print("Cannot launch browser")
-            return
+            print("Cannot launch %s" % args[0])
+            sys.exit(0)
+
+
+    def handleSftp(self):
+        self.accept() # Close dialog
+        # Launch ssh in QTerminal
+        proc = QtCore.QProcess()
+        hostname = urlparse(self.host).hostname
+        path = "/media/%s" % hostname.replace(".local", "")
+        args = ["sshfs", "-o", "direct_io,idmap=user,allow_other,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3", "-p",  str(urlparse(self.host).port), self.textName.text() + "@" + urlparse(self.host).hostname + ":/", path]
+        print (" ".join(args))
+        if not os.path.exists(path):
+            try:
+                os.makedirs(path)
+            except OSError as error:
+                print(error)
+                exit(1)
+        try:
+            
+            sys.exit(0)
+        except:
+            print("Cannot launch %s" % args[0])
+            sys.exit(0)
+        proc.startDetached("open", path)
 
 class ZeroconfBrowser(object):
 
@@ -197,29 +225,25 @@ class ZeroconfBrowser(object):
             args = ["Falkon", url]
             try:
                 proc.startDetached("launch", args)
-                return
+                sys.exit(0)
             except:
                 print("Cannot launch browser")
-                return
+                sys.exit(0)
         elif url.startswith("scanner") or url.startswith("uscan"):
             # Launch Xsane in the hope that it can do something with it
             os.system("xsane")
+            sys.exit(0)
         if url.startswith("ipp") or url.startswith("print") or url.startswith("pdl"):
             os.system("launch 'Print Settings'")
+            sys.exit(0)
         elif url.startswith("sftp"):
-            proc = QtCore.QProcess()
-            args = ["Filer", url + "/"]
-            try:
-                proc.startDetached("launch", args)
-                return
-            except:
-                print("Cannot open sftp location in Filer")
-                return
+            sftphL = sshLogin(host=url, type="sftp")
+            if sftphL.exec_() == QtWidgets.QDialog.Accepted:
+                sys.exit(0)
         elif url.startswith("ssh"):
-            # Launch the browser
-            sshL = sshLogin(host=url)
+            sshL = sshLogin(host=url, type="ssh")
             if sshL.exec_() == QtWidgets.QDialog.Accepted:
-                print("Do something")
+                sys.exit(0)
         else:
             reply = QtWidgets.QMessageBox.information(
                 self.window,
