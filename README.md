@@ -1,6 +1,6 @@
 # Utilities [![Translation status](https://hosted.weblate.org/widgets/hellosystem/-/svg-badge.svg)](https://hosted.weblate.org/engage/hellosystem/) [![Help Wanted Issues](https://img.shields.io/github/issues/helloSystem/Utilities/help%20wanted)](https://github.com/helloSystem/Utilities/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 
-Utilities written in PyQt5, meant for use with [helloSystem](https://hellosystem.github.io/).
+Utilities written in PyQt5, meant for use with [helloSystem](https://hellosystem.github.io/) and [UNIX OS X](https://gitlab.com/morales-research-corporation/os-development/mr-unix).
 
 This is a work in progress.
 
@@ -32,7 +32,7 @@ Simple tool to download a Live ISO and write it to a device (e.g., USB stick) in
 
 ## Install helloSystem.app
 
-Simple installer to install the Live ISO to disk.
+Simple installer to install the UNIX OS X to disk.
 
 ## Keyboard.app
 

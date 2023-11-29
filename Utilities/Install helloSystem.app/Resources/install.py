@@ -110,7 +110,7 @@ def show_the_no_password_warning(sender):
 # https://doc.qt.io/qt-5/qwizard.html
 #############################################################################
 
-print(tr("Install helloSystem"))
+print(tr("Install Morales Research Unix OS X"))
 
 app = QtWidgets.QApplication(sys.argv)
 
@@ -143,14 +143,14 @@ class InstallWizard(QtWidgets.QWizard, object):
         # TODO: Make sure it is actually executable
 
         self.should_show_last_page = False
-        self.error_message_nice = tr("An unknown error occurred.")
+        self.error_message_nice = tr("An unknown error occurredi...Ghost in the machine...ERR208")
 
         self.setWizardStyle(QtWidgets.QWizard.MacStyle)
 
         # self.setButtonLayout(
         #     [QtWidgets.QWizard.CustomButton1, QtWidgets.QWizard.Stretch, QtWidgets.QWizard.NextButton])
 
-        self.setWindowTitle(tr("Install helloSystem"))
+        self.setWindowTitle(tr("Install Morales Research Unix OS X"))
         self.setFixedSize(800, 550)
 
         # Remove window decorations, especially the close button
@@ -585,8 +585,8 @@ class IntroPage(QtWidgets.QWizardPage, object):
         print("Preparing IntroPage")
         super().__init__()
 
-        self.setTitle(tr('Install helloSystem'))
-        self.setSubTitle(tr("To begin with the installation, click 'Continue'."))
+        self.setTitle(tr('Install Morales Research Unix OS X'))
+        self.setSubTitle(tr("To set up the installation of Morales Research Unix OS X, click 'Continue'."))
 
         intro_vLayout = QtWidgets.QVBoxLayout(self)
         
@@ -831,7 +831,7 @@ class DiskPage(QtWidgets.QWizardPage, object):
         reply = QtWidgets.QMessageBox.warning(
             wizard,
             tr("Warning"),
-            tr("This will erase all contents of this disk and install the FreeBSD operating system on it. Continue?"),
+            tr("This will erase all contents of this disk and install the MR Unix OS X operating system on it. Continue?"),
             QtWidgets.QMessageBox.Yes,
             QtWidgets.QMessageBox.No,
         )
@@ -1180,8 +1180,8 @@ class InstallationPage(QtWidgets.QWizardPage, object):
         print("Preparing InstallationPage")
         super().__init__()
 
-        self.setTitle(tr('Installing helloSystem'))
-        self.setSubTitle(tr('helloSystem is being installed to your computer.'))
+        self.setTitle(tr('Installing MR Unix OS X 10.0'))
+        self.setSubTitle(tr('Morales Research Unix is being installed to your computer.'))
 
         self.timer = None
         self.installer_script_has_exited = False
@@ -1360,7 +1360,7 @@ class SuccessPage(QtWidgets.QWizardPage, object):
         wizard.playSound()
 
         self.setTitle(tr('Installation Complete'))
-        self.setSubTitle(tr('The installation succeeded.'))
+        self.setSubTitle(tr('The installation of Morales Research Unix OS X succeeded.'))
 
         # Restore the default closeEvent handlers: wizard.original_closeEvent, wizard.original_window_closeEvent
         wizard.closeEvent = wizard.original_closeEvent
@@ -1381,7 +1381,7 @@ class SuccessPage(QtWidgets.QWizardPage, object):
         layout.addWidget(center_widget, True)  # True = add stretch vertically
 
         label = QtWidgets.QLabel()
-        label.setText(tr("FreeBSD has been installed on your computer, click 'Restart' to begin using it."))
+        label.setText(tr("MR Unix OS X has been installed on your computer, click 'Restart' to begin using it."))
         layout.addWidget(label)
 
         self.setButtonText(wizard.NextButton, tr("Restart"))
