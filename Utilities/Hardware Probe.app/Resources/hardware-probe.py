@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Hardware Probe
-# Copyright (c) 2020-21, Simon Peter <probono@puredarwin.org>
+# Copyright (c) 2020-2023, Simon Peter <probono@puredarwin.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 import sys, os, re, socket
 import shutil
 from datetime import datetime
+import results
 
 from PyQt5 import QtWidgets, QtGui, QtCore # pkg install py37-qt5-widgets
 
@@ -196,13 +197,9 @@ class IntroPage(QtWidgets.QWizardPage, object):
         print("self.local_probe_path: %s" % self.local_probe_path)
         proc = QtCore.QProcess()
         command = 'launch'
-        args = ["Filer", self.local_probe_path]
-        try:
-            print("Starting %s %s" % (command, args))
-            proc.startDetached(command, args)
-        except:
-            wizard.showErrorPage(tr("Failed to open the hardware probe."))
-            return
+        args = {os.path.dirname(__file__) + '/results.py'}
+        print("Starting %s %s" % (command, args))
+        proc.startDetached(command, args)
 
     def initializePage(self):
         print("Displaying IntroPage")

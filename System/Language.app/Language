@@ -69,25 +69,45 @@ class LanguageSwitcher(QtWidgets.QMainWindow):
         # Only show the main ones in order to keep the list short and tidy, let's see how long
         # it takes for the first person to complain that exotic ones are missing...
         # Let's not end up like https://www.youtube.com/watch?v=4nR4HP2x1iU
-        supported_languages = ["en",
-            "fr",
-            "de",
-            "es",
-            "it",
-            "nl",
-            "sv",
-            "no",
-            "da",
-            "fi",
-            "ru",
-            "pl",
-            "pt",
-            "pt_PT",
-            "zh_CN",
-            "zh_TW",
-            "jp",
-            "ko"]
-            
+        supported_languages = ["en_US.UTF-8",
+            "fr_FR.UTF-8",
+            "de_DE.UTF-8",
+            "es_ES.UTF-8",
+            "it_IT.UTF-8",
+            "nl_NL.UTF-8",
+            "sv_SE.UTF-8",
+            "no_NO.UTF-8",
+            "da_DK.UTF-8",
+            "fi_FI.UTF-8",
+            "ru_RU.UTF-8",
+            "pl_PL.UTF-8",
+            "pt_BR.UTF-8",
+            "pt_PT.UTF-8",
+            "zh_CN.UTF-8",
+            "zh_TW.UTF-8",
+            "jp_JP.UTF-8",
+            "ko_KR.UTF-8"]
+    
+        # https://github.com/helloSystem/hello/wiki/EFI-NVRAM
+        self.nvram_prev_lang_kbd = ["en_US:0", 
+        "fr:1", 
+        "de:3", 
+        "es:8", 
+        "it:4", 
+        "nl:26", 
+        "sv:224", 
+        "nb:12", 
+        "da:9", 
+        "fi:17", 
+        "ru:19456", 
+        "pl:30762", 
+        "pt_BR:71", 
+        "pt_PT:10", 
+        "zh-Hant:-16899", 
+        "en_US:0", 
+        "ja:16384", 
+        "ko:-17409"]
+
         cleartext = ["Use English for the main language",
             "Utiliser le français comme langue principale",
             "Deutsch als Standardsprache verwenden",
@@ -123,16 +143,155 @@ class LanguageSwitcher(QtWidgets.QMainWindow):
         self.list_widget.setItemAlignment(QtCore.Qt.AlignVCenter)
         layout.addWidget(self.list_widget)
 
+        self.additional_text = QtWidgets.QLabel()
+        self.additional_text.setText("You are asked to select a language because \
+the language has not been set in EFI NVRAM yet \
+and no Raspberry Pi Keyboard and Hub is attached to the computer, \
+from which the language could be automatically detected.")
+        self.additional_text.setWordWrap(True)
+        layout.addWidget(self.additional_text)
+
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.additional_text.setFont(font)
+
+
         widget = QtWidgets.QWidget()
         widget.setLayout(layout)
         self.window.setCentralWidget(widget)
         self.window.show()
         app.exec_()
 
+    def readEfiVar(self, efi_variable_name):
+        eprint("Reading from EFI NVRAM: %s" % efi_variable_name)
+        command = "sudo -A -E efivar -p -A -N -n '%s'" % efi_variable_name
+        eprint(command)
+        read_prev_lang_kbd = ""
+        try:
+            read_prev_lang_kbd = os.popen(command).read()
+            if "%" in read_prev_lang_kbd:
+                read_prev_lang_kbd = read_prev_lang_kbd[:read_prev_lang_kbd.rfind("%")]
+            read_prev_lang_kbd = read_prev_lang_kbd.strip()
+            eprint("Read from EFI NVRAM: %s" % read_prev_lang_kbd)
+            return read_prev_lang_kbd
+        except:
+            pass
+        if read_prev_lang_kbd == "":
+            eprint("Reading from EFI NVRAM failed.")
+            return ""
+
     def onSomethingChanged(self):
         self.list_widget.setEnabled(False)
         selected_language = getattr(self.list_widget.selectedItems()[0], "language")
         print(selected_language)
+
+        # Manually write a /usr/local/var/localize/include file with the following format:
+        # LANG="de_DE.UTF-8"
+        # MM_CHARSET="de_DE.UTF-8"
+        # TZ="Europe/Berlin"
+
+        # Table that maps supported_languages languages to the corresponding time zone.
+        # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+        timezones = {
+            "en_US.UTF-8": "America/New_York",
+            "fr_FR.UTF-8": "Europe/Paris",
+            "de_DE.UTF-8": "Europe/Berlin",
+            "es_ES.UTF-8": "Europe/Madrid",
+            "it_IT.UTF-8": "Europe/Rome",
+            "nl_NL.UTF-8": "Europe/Amsterdam",
+            "sv_SE.UTF-8": "Europe/Stockholm",
+            "no_NO.UTF-8": "Europe/Oslo",
+            "da_DK.UTF-8": "Europe/Copenhagen",
+            "fi_FI.UTF-8": "Europe/Helsinki",
+            "ru_RU.UTF-8": "Europe/Moscow",
+            "pl_PL.UTF-8": "Europe/Warsaw",
+            "pt_BR.UTF-8": "America/Sao_Paulo",
+            "pt_PT.UTF-8": "Europe/Lisbon",
+            "zh_CN.UTF-8": "Asia/Shanghai",
+            "zh_TW.UTF-8": "Asia/Taipei",
+            "jp_JP.UTF-8": "Asia/Tokyo",
+            "ko_KR.UTF-8": "Asia/Seoul"
+        }
+
+        # Create the string to be written
+        string_to_be_written = "LANG=\"%s\"\n" % selected_language
+        string_to_be_written = string_to_be_written + "MM_CHARSET=\"%s\"\n" % selected_language
+        if selected_language in timezones:
+            string_to_be_written = string_to_be_written + "TZ=\"%s\"\n" % timezones[selected_language]
+        else:
+            eprint("No time zone found for %s" % selected_language)
+            eprint("Please add it to the list in the source code.")
+            exit(1)
+
+        # Create the directory if it does not exist yet
+        if not os.path.exists("/usr/local/var/localize"):
+            eprint("Creating /usr/local/var/localize")
+            command = "sudo -A -E mkdir -p /usr/local/var/localize"
+            print(command)
+            result = os.system(command)
+            if result != 0:
+                eprint("Creating /usr/local/var/localize failed.")
+                exit(1)
+            else:
+                eprint("Creating /usr/local/var/localize succeeded.")
+
+        # Write to /usr/local/var/localize/include
+        eprint("Writing to /usr/local/var/localize/include")
+        command = "echo -n '%s' | sudo -A -E tee /usr/local/var/localize/include" % string_to_be_written
+        print(command)
+        result = os.system(command)
+        if result != 0:
+            eprint("Writing to /usr/local/var/localize/include failed.")
+            exit(1)
+        else:
+            eprint("Writing to /usr/local/var/localize/include succeeded.")
+
+        # Get the corresponding prev_lang_kbd
+        selected_index = self.list_widget.currentRow()
+        prev_lang_kbd = self.nvram_prev_lang_kbd[selected_index]
+
+        efi_variable_name = "7c436110-ab2a-4bbb-a880-fe41995c9f82-prev-lang:kbd"
+
+        # Check if the FreeBSD system is running in EFI mode using sysctl  'machdep.bootmethod'; it is efi if the result is "machdep.bootmethod: UEFI"
+        command = "sysctl machdep.bootmethod | grep -q 'UEFI'"
+        result = os.system(command)
+        if result == 0:
+            eprint("The FreeBSD system is running in EFI mode.")
+
+            # Read the value of the EFI NVRAM variable
+            val = self.readEfiVar(efi_variable_name)
+            if val == "":
+                exit(1)
+
+            # Write to EFI NVRAM
+            eprint("Writing to EFI NVRAM: %s" % prev_lang_kbd)
+            command = "echo -n '%s' | sudo -A -E efivar -w -n '%s'" % (prev_lang_kbd, efi_variable_name)
+            print(command)
+            result = os.system(command)
+            if result != 0:
+                eprint("Writing to EFI NVRAM failed.")
+                exit(1)
+            else:
+                eprint("Writing to EFI NVRAM succeeded.")
+                val = self.readEfiVar(efi_variable_name)
+                if val == prev_lang_kbd:
+                    eprint("Read back EFI NVRAM variable matches what was intended to be written.")
+                else:
+                    eprint("Read back EFI NVRAM variable does not match what was intended to be written.")
+                    exit(1)
+            # Run the localize command as root so that the language is set upon the next login without the need to reboot
+            command = "sudo -A -E /usr/local/sbin/localize"
+            print(command)
+            result = os.system(command)
+            if result != 0:
+                eprint("Running the localize command failed.")
+                exit(1)
+            else:
+                eprint("Running the localize command succeeded.")
+        else:
+            eprint("The FreeBSD system is not running in EFI mode.")
+            eprint("Writing to EFI NVRAM skipped. Language will not be set on next boot.")
+
         exit(0)
 
 
