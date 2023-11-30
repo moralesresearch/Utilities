@@ -110,7 +110,7 @@ def show_the_no_password_warning(sender):
 # https://doc.qt.io/qt-5/qwizard.html
 #############################################################################
 
-print(tr("Install Morales Research Unix OS X"))
+print(tr("Install SUN/os v6.1 Public Beta"))
 
 app = QtWidgets.QApplication(sys.argv)
 
@@ -150,7 +150,7 @@ class InstallWizard(QtWidgets.QWizard, object):
         # self.setButtonLayout(
         #     [QtWidgets.QWizard.CustomButton1, QtWidgets.QWizard.Stretch, QtWidgets.QWizard.NextButton])
 
-        self.setWindowTitle(tr("Install Morales Research Unix OS X"))
+        self.setWindowTitle(tr("Install SUN/os v6.1 Public Beta"))
         self.setFixedSize(800, 550)
 
         # Remove window decorations, especially the close button
@@ -585,14 +585,14 @@ class IntroPage(QtWidgets.QWizardPage, object):
         print("Preparing IntroPage")
         super().__init__()
 
-        self.setTitle(tr('Install Morales Research Unix OS X'))
-        self.setSubTitle(tr("To set up the installation of Morales Research Unix OS X, click 'Continue'."))
+        self.setTitle(tr('Install Sun/OS v6.1 Public Beta'))
+        self.setSubTitle(tr("To set up the installation of the Sun operating system, click 'Continue'."))
 
         intro_vLayout = QtWidgets.QVBoxLayout(self)
         
         intro_label = QtWidgets.QLabel()
         intro_label.setWordWrap(True)
-        intro_label.setText(tr("<p>helloSystem is based on FreeBSD, an operating system for a variety of platforms which focuses on features, speed, and stability. It is derived from BSD, the version of UNIX® developed at the University of California, Berkeley. FreeBSD is developed and maintained by a large community.</p>"))
+        intro_label.setText(tr("<p>Sun/OS is based on FreeBSD, an operating system for a variety of platforms which focuses on features, speed, and stability. It is derived from BSD, the version of UNIX® developed at the University of California, Berkeley. FreeBSD is developed and maintained by a large community.</p>"))
         intro_vLayout.addWidget(intro_label, False)  # True = add stretch vertically
 
         # Add stretch vertically
@@ -831,7 +831,7 @@ class DiskPage(QtWidgets.QWizardPage, object):
         reply = QtWidgets.QMessageBox.warning(
             wizard,
             tr("Warning"),
-            tr("This will erase all contents of this disk and install the MR Unix OS X operating system on it. Continue?"),
+            tr("This will erase all contents of this disk and install the Sun operating system on it. Continue?"),
             QtWidgets.QMessageBox.Yes,
             QtWidgets.QMessageBox.No,
         )
@@ -1180,8 +1180,8 @@ class InstallationPage(QtWidgets.QWizardPage, object):
         print("Preparing InstallationPage")
         super().__init__()
 
-        self.setTitle(tr('Installing MR Unix OS X 10.0'))
-        self.setSubTitle(tr('Morales Research Unix is being installed to your computer.'))
+        self.setTitle(tr('Installing SUN/os v6.1'))
+        self.setSubTitle(tr('the SUN/os Public Beta is being installed to your computer.'))
 
         self.timer = None
         self.installer_script_has_exited = False
@@ -1360,7 +1360,7 @@ class SuccessPage(QtWidgets.QWizardPage, object):
         wizard.playSound()
 
         self.setTitle(tr('Installation Complete'))
-        self.setSubTitle(tr('The installation of Morales Research Unix OS X succeeded.'))
+        self.setSubTitle(tr('The installation of SUN/os succeeded.'))
 
         # Restore the default closeEvent handlers: wizard.original_closeEvent, wizard.original_window_closeEvent
         wizard.closeEvent = wizard.original_closeEvent
